@@ -1,0 +1,25 @@
+generator client {
+  provider            = "prisma-client"
+  output              = "../src/generated/prisma"
+  moduleFormat        = "esm"
+  importFileExtension = "js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Sale {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  platform    String   @db.VarChar(64)
+  saleId      String   @map("sale_id") @db.VarChar(128)
+  amountCents Int      @map("amount_cents")
+  currency    String   @db.VarChar(3)
+  occurredAt  DateTime @map("occurred_at") @db.Timestamptz(3)
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  @@unique([platform, saleId])
+  @@index([occurredAt])
+  @@index([platform, occurredAt])
+  @@map("sales")
+}
